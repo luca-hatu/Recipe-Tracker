@@ -90,7 +90,7 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
         iconSrc,
         ingredients,
         totalCost,
-        favorite: false 
+        favorite: false // Initialize favorite status
     };
 
     let recipes = [];
@@ -105,88 +105,96 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
     displayRecipes();
 });
 
+document.getElementById('filter-select').addEventListener('change', () => {
+    displayRecipes();
+});
+
 function displayRecipes() {
     const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+    const filter = document.getElementById('filter-select').value;
+
     const recipesDiv = document.getElementById('recipes');
     recipesDiv.innerHTML = '';
 
     recipes.forEach((recipe, index) => {
-        const recipeDiv = document.createElement('div');
-        recipeDiv.className = 'recipe';
+        if (filter === 'all' || recipe.type === filter) {
+            const recipeDiv = document.createElement('div');
+            recipeDiv.className = 'recipe';
 
-        const recipeTitle = document.createElement('h2');
-        recipeTitle.textContent = recipe.name;
+            const recipeTitle = document.createElement('h2');
+            recipeTitle.textContent = recipe.name;
 
-        const recipeType = document.createElement('p');
-        const typeImg = document.createElement('img');
-        typeImg.src = recipe.iconSrc;
-        typeImg.alt = recipe.type;
-        typeImg.style.width = '30px'; 
-        typeImg.style.height = '30px'; 
-        recipeType.textContent = 'Type: ';
-        recipeType.appendChild(typeImg);
-        recipeType.innerHTML += ` ${recipe.type}`;
+            const recipeType = document.createElement('p');
+            const typeImg = document.createElement('img');
+            typeImg.src = recipe.iconSrc;
+            typeImg.alt = recipe.type;
+            typeImg.style.width = '30px'; 
+            typeImg.style.height = '30px'; 
+            recipeType.textContent = 'Type: ';
+            recipeType.appendChild(typeImg);
+            recipeType.innerHTML += ` ${recipe.type}`;
 
-        const recipeIngredients = document.createElement('div');
-        recipeIngredients.className = 'recipe-ingredients';
-        recipe.ingredients.forEach(ingredient => {
-            const ingredientItem = document.createElement('p');
-            ingredientItem.textContent = `${ingredient.quantity} ${ingredient.name} - $${ingredient.price.toFixed(2)}`;
-            recipeIngredients.appendChild(ingredientItem);
-        });
+            const recipeIngredients = document.createElement('div');
+            recipeIngredients.className = 'recipe-ingredients';
+            recipe.ingredients.forEach(ingredient => {
+                const ingredientItem = document.createElement('p');
+                ingredientItem.textContent = `${ingredient.quantity} ${ingredient.name} - $${ingredient.price.toFixed(2)}`;
+                recipeIngredients.appendChild(ingredientItem);
+            });
 
-        const recipeInstructions = document.createElement('p');
-        recipeInstructions.textContent = `Instructions: ${recipe.instructions}`;
+            const recipeInstructions = document.createElement('p');
+            recipeInstructions.textContent = `Instructions: ${recipe.instructions}`;
 
-        const recipeCost = document.createElement('p');
-        recipeCost.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
+            const recipeCost = document.createElement('p');
+            recipeCost.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
 
-        const buttonsDiv = document.createElement('div');
-        buttonsDiv.className = 'recipe-buttons';
-        
-        const editButton = document.createElement('button');
-        const editImg = document.createElement('img');
-        editImg.src = 'images/edit.png';
-        editImg.alt = 'Edit Recipe';
-        editImg.style.width = '20px'; 
-        editImg.style.height = '20px'; 
-        editButton.appendChild(editImg);
-        editButton.addEventListener('click', () => editRecipe(index));
+            const buttonsDiv = document.createElement('div');
+            buttonsDiv.className = 'recipe-buttons';
+            
+            const editButton = document.createElement('button');
+            const editImg = document.createElement('img');
+            editImg.src = 'images/edit.png';
+            editImg.alt = 'Edit Recipe';
+            editImg.style.width = '20px'; 
+            editImg.style.height = '20px'; 
+            editButton.appendChild(editImg);
+            editButton.addEventListener('click', () => editRecipe(index));
 
-        const removeButton = document.createElement('button');
-        const removeImg = document.createElement('img');
-        removeImg.src = 'images/trash.png';
-        removeImg.alt = 'Remove Recipe';
-        removeImg.style.width = '20px'; 
-        removeImg.style.height = '20px'; 
-        removeButton.appendChild(removeImg);
-        removeButton.addEventListener('click', () => removeRecipe(index));
+            const removeButton = document.createElement('button');
+            const removeImg = document.createElement('img');
+            removeImg.src = 'images/trash.png';
+            removeImg.alt = 'Remove Recipe';
+            removeImg.style.width = '20px'; 
+            removeImg.style.height = '20px'; 
+            removeButton.appendChild(removeImg);
+            removeButton.addEventListener('click', () => removeRecipe(index));
 
-        const viewIngredientsButton = document.createElement('button');
-        viewIngredientsButton.textContent = 'View Shopping List';
-        viewIngredientsButton.addEventListener('click', () => viewIngredients(index));
+            const viewIngredientsButton = document.createElement('button');
+            viewIngredientsButton.textContent = 'View Shopping List';
+            viewIngredientsButton.addEventListener('click', () => viewIngredients(index));
 
-        const favoriteButton = document.createElement('button');
-        favoriteButton.className = 'favorite-btn';
-        favoriteButton.textContent = 'Favorite';
-        if (recipe.favorite) {
-            favoriteButton.classList.add('filled');
+            const favoriteButton = document.createElement('button');
+            favoriteButton.className = 'favorite-btn';
+            favoriteButton.textContent = 'Favorite';
+            if (recipe.favorite) {
+                favoriteButton.classList.add('filled');
+            }
+            favoriteButton.onclick = () => toggleFavorite(index);
+
+            buttonsDiv.appendChild(editButton);
+            buttonsDiv.appendChild(removeButton);
+            buttonsDiv.appendChild(viewIngredientsButton);
+            buttonsDiv.appendChild(favoriteButton);
+
+            recipeDiv.appendChild(recipeTitle);
+            recipeDiv.appendChild(recipeType);
+            recipeDiv.appendChild(recipeIngredients);
+            recipeDiv.appendChild(recipeInstructions);
+            recipeDiv.appendChild(recipeCost);
+            recipeDiv.appendChild(buttonsDiv);
+
+            recipesDiv.appendChild(recipeDiv);
         }
-        favoriteButton.onclick = () => toggleFavorite(index);
-
-        buttonsDiv.appendChild(editButton);
-        buttonsDiv.appendChild(removeButton);
-        buttonsDiv.appendChild(viewIngredientsButton);
-        buttonsDiv.appendChild(favoriteButton);
-
-        recipeDiv.appendChild(recipeTitle);
-        recipeDiv.appendChild(recipeType);
-        recipeDiv.appendChild(recipeIngredients);
-        recipeDiv.appendChild(recipeInstructions);
-        recipeDiv.appendChild(recipeCost);
-        recipeDiv.appendChild(buttonsDiv);
-
-        recipesDiv.appendChild(recipeDiv);
     });
 }
 
@@ -262,6 +270,13 @@ function editRecipe(index) {
     });
 
     document.getElementById('popup-form').style.display = 'block';
+
+    // Remove the old recipe from localStorage
+    recipes.splice(index, 1);
+    localStorage.setItem('recipes', JSON.stringify(recipes));
+
+    // Update the recipes list on screen
+    displayRecipes();
 }
 
 function removeRecipe(index) {
@@ -271,16 +286,35 @@ function removeRecipe(index) {
     displayRecipes();
 }
 
+function viewIngredients(index) {
+    const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+    const recipe = recipes[index];
+
+    const ingredientsListDiv = document.getElementById('ingredients-list');
+    ingredientsListDiv.innerHTML = '';
+
+    recipe.ingredients.forEach(ingredient => {
+        const ingredientItem = document.createElement('p');
+        ingredientItem.textContent = `${ingredient.quantity} ${ingredient.name}`;
+        ingredientsListDiv.appendChild(ingredientItem);
+    });
+
+    const totalCostP = document.getElementById('total-cost');
+    totalCostP.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
+
+    document.getElementById('popup-ingredients').style.display = 'block';
+}
+
+document.querySelector('.close-btn').addEventListener('click', () => {
+    document.getElementById('popup-ingredients').style.display = 'none';
+});
+
+window.addEventListener('click', (event) => {
+    if (event.target === document.getElementById('popup-ingredients')) {
+        document.getElementById('popup-ingredients').style.display = 'none';
+    }
+});
+
 document.addEventListener('DOMContentLoaded', () => {
     displayRecipes();
-
-    document.querySelector('#popup-ingredients .close-btn').addEventListener('click', () => {
-        document.getElementById('popup-ingredients').style.display = 'none';
-    });
-
-    window.addEventListener('click', (event) => {
-        if (event.target === document.getElementById('popup-ingredients')) {
-            document.getElementById('popup-ingredients').style.display = 'none';
-        }
-    });
 });

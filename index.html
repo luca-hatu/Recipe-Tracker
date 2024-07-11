@@ -9,6 +9,19 @@
 <body>
     <div class="container">
         <h1>Recipe Tracker</h1>
+        <div id="filters">
+            <label for="filter-select">Filter by Type:</label>
+            <select id="filter-select">
+                <option value="all">All</option>
+                <option value="Cake">Cake</option>
+                <option value="Bread">Bread</option>
+                <option value="Dessert">Dessert</option>
+                <option value="Main Course">Main Course</option>
+                <option value="Appetizer">Appetizer</option>
+                <option value="Salad">Salad</option>
+                <option value="Soup">Soup</option>
+            </select>
+        </div>
         <button id="add-recipe-btn">Add Recipe</button>
         <div id="recipes"></div>
         
