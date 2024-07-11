@@ -89,7 +89,8 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
         type,
         iconSrc,
         ingredients,
-        totalCost
+        totalCost,
+        favorite: false 
     };
 
     let recipes = [];
@@ -120,8 +121,8 @@ function displayRecipes() {
         const typeImg = document.createElement('img');
         typeImg.src = recipe.iconSrc;
         typeImg.alt = recipe.type;
-        typeImg.style.width = '30px';  // Adjusted width
-        typeImg.style.height = '30px'; // Adjusted height
+        typeImg.style.width = '30px'; 
+        typeImg.style.height = '30px'; 
         recipeType.textContent = 'Type: ';
         recipeType.appendChild(typeImg);
         recipeType.innerHTML += ` ${recipe.type}`;
@@ -140,7 +141,6 @@ function displayRecipes() {
         const recipeCost = document.createElement('p');
         recipeCost.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
 
-        // Edit, Remove, and View Ingredients Buttons
         const buttonsDiv = document.createElement('div');
         buttonsDiv.className = 'recipe-buttons';
         
@@ -148,27 +148,36 @@ function displayRecipes() {
         const editImg = document.createElement('img');
         editImg.src = 'images/edit.png';
         editImg.alt = 'Edit Recipe';
-        editImg.style.width = '20px';  // Adjusted width
-        editImg.style.height = '20px'; // Adjusted height
+        editImg.style.width = '20px'; 
+        editImg.style.height = '20px'; 
         editButton.appendChild(editImg);
-        editButton.addEventListener('click', () => editRecipe(index)); // Add event listener for edit button
+        editButton.addEventListener('click', () => editRecipe(index));
 
         const removeButton = document.createElement('button');
         const removeImg = document.createElement('img');
         removeImg.src = 'images/trash.png';
         removeImg.alt = 'Remove Recipe';
-        removeImg.style.width = '20px';  // Adjusted width
-        removeImg.style.height = '20px'; // Adjusted height
+        removeImg.style.width = '20px'; 
+        removeImg.style.height = '20px'; 
         removeButton.appendChild(removeImg);
-        removeButton.addEventListener('click', () => removeRecipe(index)); // Add event listener for remove button
+        removeButton.addEventListener('click', () => removeRecipe(index));
 
         const viewIngredientsButton = document.createElement('button');
         viewIngredientsButton.textContent = 'View Shopping List';
         viewIngredientsButton.addEventListener('click', () => viewIngredients(index));
 
+        const favoriteButton = document.createElement('button');
+        favoriteButton.className = 'favorite-btn';
+        favoriteButton.textContent = 'Favorite';
+        if (recipe.favorite) {
+            favoriteButton.classList.add('filled');
+        }
+        favoriteButton.onclick = () => toggleFavorite(index);
+
         buttonsDiv.appendChild(editButton);
         buttonsDiv.appendChild(removeButton);
         buttonsDiv.appendChild(viewIngredientsButton);
+        buttonsDiv.appendChild(favoriteButton);
 
         recipeDiv.appendChild(recipeTitle);
         recipeDiv.appendChild(recipeType);
@@ -181,39 +190,22 @@ function displayRecipes() {
     });
 }
 
-function viewIngredients(index) {
-    const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
-    const recipe = recipes[index];
-
-    const ingredientsListDiv = document.getElementById('ingredients-list');
-    ingredientsListDiv.innerHTML = '';
-
-    recipe.ingredients.forEach(ingredient => {
-        const ingredientItem = document.createElement('p');
-        ingredientItem.textContent = `${ingredient.quantity} ${ingredient.name} - $${ingredient.price.toFixed(2)}`;
-        ingredientsListDiv.appendChild(ingredientItem);
-    });
-
-    const totalCostP = document.getElementById('total-cost');
-    totalCostP.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
-
-    // Display the popup
-    document.getElementById('popup-ingredients').style.display = 'block';
+function toggleFavorite(index) {
+    let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+    recipes[index].favorite = !recipes[index].favorite;
+    localStorage.setItem('recipes', JSON.stringify(recipes));
+    displayRecipes();
 }
 
 function editRecipe(index) {
-    // For now, let's log the index to verify if editRecipe function is being called
     console.log('Edit recipe index:', index);
 
-    // Example: You can pre-fill a form with the existing recipe data for editing
     const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
     const recipeToEdit = recipes[index];
 
-    // Pre-fill the form fields with the existing recipe data
     document.getElementById('recipe-name').value = recipeToEdit.name;
     document.getElementById('recipe-instructions').value = recipeToEdit.instructions;
 
-    // Clear previous ingredients and re-add from recipeToEdit
     const ingredientsContainer = document.getElementById('ingredients-container');
     ingredientsContainer.innerHTML = '';
 
@@ -260,7 +252,6 @@ function editRecipe(index) {
         ingredientsContainer.appendChild(ingredientDiv);
     });
 
-    // Pre-select the type radio button matching the recipe's type
     const typeRadios = document.querySelectorAll('input[name="type"]');
     typeRadios.forEach(radio => {
         if (radio.value === recipeToEdit.type) {
@@ -270,7 +261,6 @@ function editRecipe(index) {
         }
     });
 
-    // Display the popup form for editing
     document.getElementById('popup-form').style.display = 'block';
 }
 
@@ -284,12 +274,10 @@ function removeRecipe(index) {
 document.addEventListener('DOMContentLoaded', () => {
     displayRecipes();
 
-    // Close button for ingredients popup
     document.querySelector('#popup-ingredients .close-btn').addEventListener('click', () => {
         document.getElementById('popup-ingredients').style.display = 'none';
     });
 
-    // Close popup when clicking outside it
     window.addEventListener('click', (event) => {
         if (event.target === document.getElementById('popup-ingredients')) {
             document.getElementById('popup-ingredients').style.display = 'none';
