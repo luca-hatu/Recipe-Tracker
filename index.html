@@ -9,14 +9,54 @@
 <body>
     <div class="container">
         <h1>Recipe Tracker</h1>
-        <form id="recipe-form">
-            <input type="text" id="recipe-name" placeholder="Recipe Name" required>
-            <textarea id="recipe-ingredients" placeholder="Ingredients" required></textarea>
-            <textarea id="recipe-instructions" placeholder="Instructions" required></textarea>
-            <button type="submit">Add Recipe</button>
-        </form>
+        <button id="add-recipe-btn">Add Recipe</button>
         <div id="recipes"></div>
     </div>
+
+    <div id="popup-form" class="popup">
+        <div class="popup-content">
+            <span class="close-btn">&times;</span>
+            <form id="recipe-form">
+                <input type="text" id="recipe-name" placeholder="Recipe Name" required>
+                <textarea id="recipe-ingredients" placeholder="Ingredients" required></textarea>
+                <textarea id="recipe-instructions" placeholder="Instructions" required></textarea>
+                <div id="recipe-type">
+                    <label>
+                        <input type="radio" name="type" value="Cake" required>
+                        <img src="images/cake.png" alt="Cake">
+                    </label>
+                    <label>
+                        <input type="radio" name="type" value="Bread" required>
+                        <img src="images/bread.png" alt="Bread">
+                    </label>
+                    <label>
+                        <input type="radio" name="type" value="Dessert" required>
+                        <img src="images/dessert.png" alt="Dessert">
+                    </label>
+                    <label>
+                        <input type="radio" name="type" value="Main Course" required>
+                        <img src="images/food.png" alt="Main Course">
+                    </label>
+                    <label>
+                        <input type="radio" name="type" value="Appetizer" required>
+                        <img src="images/appetizer.png" alt="Appetizer">
+                    </label>
+                    <label>
+                        <input type="radio" name="type" value="Salad" required>
+                        <img src="images/salad.png" alt="Salad">
+                    </label>
+                    <label>
+                        <input type="radio" name="type" value="Soup" required>
+                        <img src="images/soup.png" alt="Soup">
+                    </label>
+                </div>
+                <button type="submit">Add Recipe</button>
+            </form>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
+
+
