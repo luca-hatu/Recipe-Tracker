@@ -90,7 +90,7 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
         iconSrc,
         ingredients,
         totalCost,
-        favorite: false // Initialize favorite status
+        favorite: false 
     };
 
     let recipes = [];
@@ -109,10 +109,13 @@ document.getElementById('filter-select').addEventListener('change', () => {
     displayRecipes();
 });
 
-function displayRecipes() {
-    const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
-    const filter = document.getElementById('filter-select').value;
+document.getElementById('show-favorites-btn').addEventListener('click', () => {
+    displayFavorites();
+});
 
+function displayRecipes(recipesToShow) {
+    const recipes = recipesToShow || JSON.parse(localStorage.getItem('recipes')) || [];
+    const filter = document.getElementById('filter-select').value;
     const recipesDiv = document.getElementById('recipes');
     recipesDiv.innerHTML = '';
 
@@ -198,6 +201,12 @@ function displayRecipes() {
     });
 }
 
+function displayFavorites() {
+    const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+    const favoriteRecipes = recipes.filter(recipe => recipe.favorite);
+    displayRecipes(favoriteRecipes);
+}
+
 function toggleFavorite(index) {
     let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
     recipes[index].favorite = !recipes[index].favorite;
@@ -271,11 +280,9 @@ function editRecipe(index) {
 
     document.getElementById('popup-form').style.display = 'block';
 
-    // Remove the old recipe from localStorage
     recipes.splice(index, 1);
     localStorage.setItem('recipes', JSON.stringify(recipes));
 
-    // Update the recipes list on screen
     displayRecipes();
 }
 
@@ -317,12 +324,7 @@ window.addEventListener('click', (event) => {
 
 document.addEventListener('DOMContentLoaded', () => {
     displayRecipes();
-});
-document.addEventListener('DOMContentLoaded', () => {
-    // Display recipes when the page loads
-    displayRecipes();
 
-    // Add event listener for the search input
     const searchInput = document.getElementById('search-input');
     searchInput.addEventListener('input', () => {
         const searchText = searchInput.value.trim().toLowerCase();
@@ -333,95 +335,10 @@ document.addEventListener('DOMContentLoaded', () => {
 function filterRecipes(searchText) {
     const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
     const filteredRecipes = recipes.filter(recipe => {
-        // Check if the recipe name or any ingredient name contains the search text
         return recipe.name.toLowerCase().includes(searchText) ||
                recipe.ingredients.some(ingredient => ingredient.name.toLowerCase().includes(searchText));
     });
     displayRecipes(filteredRecipes);
 }
 
-function displayRecipes(recipesToShow) {
-    const recipes = recipesToShow || JSON.parse(localStorage.getItem('recipes')) || [];
-    const filter = document.getElementById('filter-select').value;
-    const recipesDiv = document.getElementById('recipes');
-    recipesDiv.innerHTML = '';
 
-    recipes.forEach(recipe => {
-        // Check if recipe matches the filter criteria
-        if (filter === 'all' || recipe.type === filter) {
-            const recipeDiv = document.createElement('div');
-            recipeDiv.className = 'recipe';
-
-            // Create elements for recipe details (name, type, ingredients, etc.)
-            const recipeTitle = document.createElement('h2');
-            recipeTitle.textContent = recipe.name;
-
-            const recipeType = document.createElement('p');
-            recipeType.textContent = `Type: ${recipe.type}`;
-
-            const recipeIngredients = document.createElement('div');
-            recipeIngredients.className = 'recipe-ingredients';
-            recipe.ingredients.forEach(ingredient => {
-                const ingredientItem = document.createElement('p');
-                ingredientItem.textContent = `${ingredient.quantity} ${ingredient.name} - $${ingredient.price.toFixed(2)}`;
-                recipeIngredients.appendChild(ingredientItem);
-            });
-
-            const recipeInstructions = document.createElement('p');
-            recipeInstructions.textContent = `Instructions: ${recipe.instructions}`;
-
-            const recipeCost = document.createElement('p');
-            recipeCost.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
-
-            // Create buttons for actions (edit, remove, view ingredients, favorite)
-            const buttonsDiv = document.createElement('div');
-            buttonsDiv.className = 'recipe-buttons';
-
-            const editButton = document.createElement('button');
-            editButton.textContent = 'Edit';
-            editButton.addEventListener('click', () => editRecipe(recipes.indexOf(recipe)));
-
-            const removeButton = document.createElement('button');
-            removeButton.textContent = 'Remove';
-            removeButton.addEventListener('click', () => removeRecipe(recipes.indexOf(recipe)));
-
-            const viewIngredientsButton = document.createElement('button');
-            viewIngredientsButton.textContent = 'View Ingredients';
-            viewIngredientsButton.addEventListener('click', () => viewIngredients(recipes.indexOf(recipe)));
-
-            const favoriteButton = document.createElement('button');
-            favoriteButton.textContent = recipe.favorite ? 'Unfavorite' : 'Favorite';
-            favoriteButton.addEventListener('click', () => toggleFavorite(recipes.indexOf(recipe)));
-
-            if (recipe.favorite) {
-                favoriteButton.classList.add('filled');
-            }
-
-            // Append buttons to buttonsDiv
-            buttonsDiv.appendChild(editButton);
-            buttonsDiv.appendChild(removeButton);
-            buttonsDiv.appendChild(viewIngredientsButton);
-            buttonsDiv.appendChild(favoriteButton);
-
-            // Append all elements to recipeDiv
-            recipeDiv.appendChild(recipeTitle);
-            recipeDiv.appendChild(recipeType);
-            recipeDiv.appendChild(recipeIngredients);
-            recipeDiv.appendChild(recipeInstructions);
-            recipeDiv.appendChild(recipeCost);
-            recipeDiv.appendChild(buttonsDiv);
-
-            // Append recipeDiv to recipesDiv
-            recipesDiv.appendChild(recipeDiv);
-        }
-    });
-}
-
-function toggleFavorite(index) {
-    let recipes = JSON.parse(localStorage.getItem('recipes')) || [];
-    recipes[index].favorite = !recipes[index].favorite;
-    localStorage.setItem('recipes', JSON.stringify(recipes));
-    displayRecipes();
-}
-
-// Implement other functions (editRecipe, removeRecipe, viewIngredients) as previously shown
