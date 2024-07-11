@@ -17,9 +17,18 @@
         <div class="popup-content">
             <span class="close-btn">&times;</span>
             <form id="recipe-form">
-                <input type="text" id="recipe-name" placeholder="Recipe Name" required>
-                <textarea id="recipe-ingredients" placeholder="Ingredients" required></textarea>
-                <textarea id="recipe-instructions" placeholder="Instructions" required></textarea>
+                <label for="recipe-name">Name:</label>
+                <input type="text" id="recipe-name" name="recipe-name" required><br><br>
+                
+                <label for="recipe-ingredients">Ingredients:</label>
+                <div id="ingredients-container">
+                    <!-- Ingredients will be dynamically added here -->
+                </div>
+                <button type="button" id="add-ingredient-btn">Add Ingredient</button><br><br>
+                
+                <label for="recipe-instructions">Instructions:</label>
+                <textarea id="recipe-instructions" name="recipe-instructions" rows="4" required></textarea><br><br>
+                
                 <div id="recipe-type">
                     <label>
                         <input type="radio" name="type" value="Cake" required>

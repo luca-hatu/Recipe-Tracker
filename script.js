@@ -12,27 +12,84 @@ window.addEventListener('click', (event) => {
     }
 });
 
+document.getElementById('add-ingredient-btn').addEventListener('click', () => {
+    const ingredientsContainer = document.getElementById('ingredients-container');
+
+    const ingredientDiv = document.createElement('div');
+    ingredientDiv.className = 'ingredient';
+
+    const nameLabel = document.createElement('label');
+    nameLabel.textContent = 'Ingredient:';
+    const nameInput = document.createElement('input');
+    nameInput.type = 'text';
+    nameInput.className = 'ingredient-name';
+    nameLabel.appendChild(nameInput);
+
+    const quantityLabel = document.createElement('label');
+    quantityLabel.textContent = 'Quantity:';
+    const quantityInput = document.createElement('input');
+    quantityInput.type = 'text';
+    quantityInput.className = 'ingredient-quantity';
+    quantityLabel.appendChild(quantityInput);
+
+    const priceLabel = document.createElement('label');
+    priceLabel.textContent = 'Price:';
+    const priceInput = document.createElement('input');
+    priceInput.type = 'text';
+    priceInput.className = 'ingredient-price';
+    priceLabel.appendChild(priceInput);
+
+    const removeBtn = document.createElement('button');
+    removeBtn.textContent = 'Remove';
+    removeBtn.className = 'remove-ingredient-btn';
+    removeBtn.addEventListener('click', () => {
+        ingredientDiv.remove();
+    });
+
+    ingredientDiv.appendChild(nameLabel);
+    ingredientDiv.appendChild(quantityLabel);
+    ingredientDiv.appendChild(priceLabel);
+    ingredientDiv.appendChild(removeBtn);
+
+    ingredientsContainer.appendChild(ingredientDiv);
+});
+
 document.getElementById('recipe-form').addEventListener('submit', function(e) {
     e.preventDefault();
 
     const name = document.getElementById('recipe-name').value;
-    const ingredients = document.getElementById('recipe-ingredients').value;
     const instructions = document.getElementById('recipe-instructions').value;
     const typeElement = document.querySelector('input[name="type"]:checked');
     const type = typeElement ? typeElement.value : '';
     const iconSrc = typeElement ? typeElement.nextElementSibling.src : '';
 
-    if (!name || !ingredients || !instructions || !type) {
+    if (!name || !instructions || !type) {
         alert("Please fill in all fields and select a recipe type.");
         return;
     }
 
+    const ingredients = [];
+    document.querySelectorAll('.ingredient').forEach(ingredient => {
+        const name = ingredient.querySelector('.ingredient-name').value;
+        const quantity = ingredient.querySelector('.ingredient-quantity').value;
+        const price = parseFloat(ingredient.querySelector('.ingredient-price').value);
+
+        if (name && quantity && price) {
+            ingredients.push({ name, quantity, price });
+        }
+    });
+
+    const totalCost = ingredients.reduce((total, ingredient) => {
+        return total + (parseFloat(ingredient.quantity) * parseFloat(ingredient.price));
+    }, 0);
+
     const recipe = {
         name,
-        ingredients,
         instructions,
         type,
-        iconSrc
+        iconSrc,
+        ingredients,
+        totalCost
     };
 
     let recipes = [];
@@ -69,11 +126,19 @@ function displayRecipes() {
         recipeType.appendChild(typeImg);
         recipeType.innerHTML += ` ${recipe.type}`;
 
-        const recipeIngredients = document.createElement('p');
-        recipeIngredients.textContent = `Ingredients: ${recipe.ingredients}`;
+        const recipeIngredients = document.createElement('div');
+        recipeIngredients.className = 'recipe-ingredients';
+        recipe.ingredients.forEach(ingredient => {
+            const ingredientItem = document.createElement('p');
+            ingredientItem.textContent = `${ingredient.quantity} ${ingredient.name} - $${ingredient.price.toFixed(2)}`;
+            recipeIngredients.appendChild(ingredientItem);
+        });
 
         const recipeInstructions = document.createElement('p');
         recipeInstructions.textContent = `Instructions: ${recipe.instructions}`;
+
+        const recipeCost = document.createElement('p');
+        recipeCost.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
 
         // Edit and Remove Buttons
         const buttonsDiv = document.createElement('div');
@@ -104,6 +169,7 @@ function displayRecipes() {
         recipeDiv.appendChild(recipeType);
         recipeDiv.appendChild(recipeIngredients);
         recipeDiv.appendChild(recipeInstructions);
+        recipeDiv.appendChild(recipeCost);
         recipeDiv.appendChild(buttonsDiv);
 
         recipesDiv.appendChild(recipeDiv);
@@ -111,7 +177,6 @@ function displayRecipes() {
 }
 
 function editRecipe(index) {
-    // Implement edit functionality if needed
     // For now, let's log the index to verify if editRecipe function is being called
     console.log('Edit recipe index:', index);
 
@@ -119,12 +184,58 @@ function editRecipe(index) {
     const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
     const recipeToEdit = recipes[index];
 
-    // Pre-fill form fields with existing data
+    // Pre-fill the form fields with the existing recipe data
     document.getElementById('recipe-name').value = recipeToEdit.name;
-    document.getElementById('recipe-ingredients').value = recipeToEdit.ingredients;
     document.getElementById('recipe-instructions').value = recipeToEdit.instructions;
 
-    // Find and check the type radio button matching the recipe's type
+    // Clear previous ingredients and re-add from recipeToEdit
+    const ingredientsContainer = document.getElementById('ingredients-container');
+    ingredientsContainer.innerHTML = '';
+
+    recipeToEdit.ingredients.forEach(ingredient => {
+        const ingredientDiv = document.createElement('div');
+        ingredientDiv.className = 'ingredient';
+
+        const nameLabel = document.createElement('label');
+        nameLabel.textContent = 'Ingredient:';
+        const nameInput = document.createElement('input');
+        nameInput.type = 'text';
+        nameInput.className = 'ingredient-name';
+        nameInput.value = ingredient.name;
+        nameLabel.appendChild(nameInput);
+
+        const quantityLabel = document.createElement('label');
+        quantityLabel.textContent = 'Quantity:';
+        const quantityInput = document.createElement('input');
+        quantityInput.type = 'text';
+        quantityInput.className = 'ingredient-quantity';
+        quantityInput.value = ingredient.quantity;
+        quantityLabel.appendChild(quantityInput);
+
+        const priceLabel = document.createElement('label');
+        priceLabel.textContent = 'Price:';
+        const priceInput = document.createElement('input');
+        priceInput.type = 'text';
+        priceInput.className = 'ingredient-price';
+        priceInput.value = ingredient.price;
+        priceLabel.appendChild(priceInput);
+
+        const removeBtn = document.createElement('button');
+        removeBtn.textContent = 'Remove';
+        removeBtn.className = 'remove-ingredient-btn';
+        removeBtn.addEventListener('click', () => {
+            ingredientDiv.remove();
+        });
+
+        ingredientDiv.appendChild(nameLabel);
+        ingredientDiv.appendChild(quantityLabel);
+        ingredientDiv.appendChild(priceLabel);
+        ingredientDiv.appendChild(removeBtn);
+
+        ingredientsContainer.appendChild(ingredientDiv);
+    });
+
+    // Pre-select the type radio button matching the recipe's type
     const typeRadios = document.querySelectorAll('input[name="type"]');
     typeRadios.forEach(radio => {
         if (radio.value === recipeToEdit.type) {
