@@ -213,3 +213,15 @@ input, textarea, button {
     color: #fff;
     border: none;
 }
+.tag-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+    padding: 5px 10px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.tag-btn.selected {
+    background-color: #4CAF50;
+    color: white;
+}

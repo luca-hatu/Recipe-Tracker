@@ -78,6 +78,10 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
             ingredients.push({ name, quantity, price });
         }
     });
+    const tags = [];
+        document.querySelectorAll('input[name="tags"]:checked').forEach(tag => {
+            tags.push(tag.value);
+        });
 
     const totalCost = ingredients.reduce((total, ingredient) => {
         return total + (parseFloat(ingredient.quantity) * parseFloat(ingredient.price));
@@ -90,7 +94,8 @@ document.getElementById('recipe-form').addEventListener('submit', function(e) {
         iconSrc,
         ingredients,
         totalCost,
-        favorite: false 
+        favorite: false,
+        tags
     };
 
     let recipes = [];

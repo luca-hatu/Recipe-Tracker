@@ -43,7 +43,6 @@
                 
                 <label for="recipe-instructions">Instructions:</label>
                 <textarea id="recipe-instructions" name="recipe-instructions" rows="4" required></textarea><br><br>
-                
                 <div id="recipe-type">
                     <label>
                         <input type="radio" name="type" value="Cake" required>
@@ -74,6 +73,11 @@
                         <img src="images/soup.png" alt="Soup">
                     </label>
                 </div>
+                <div id="recipe-tags">
+                    <button id="tag-vegetarian" class="tag-btn">Vegetarian</button>
+                    <button id="tag-quick" class="tag-btn">Quick</button>
+                </div>
+                
                 <button type="submit">Add Recipe</button>
             </form>
         </div>
@@ -82,9 +86,7 @@
         <div class="popup-content">
             <span class="close-btn">&times;</span>
             <h2>Ingredients List</h2>
-            </button>
-            <div id="ingredients-list">
-            </div>
+            <div id="ingredients-list"></div>
             <p id="total-cost"></p>
         </div>
     </div>
