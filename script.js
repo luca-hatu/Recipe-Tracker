@@ -140,7 +140,7 @@ function displayRecipes() {
         const recipeCost = document.createElement('p');
         recipeCost.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
 
-        // Edit and Remove Buttons
+        // Edit, Remove, and View Ingredients Buttons
         const buttonsDiv = document.createElement('div');
         buttonsDiv.className = 'recipe-buttons';
         
@@ -162,8 +162,13 @@ function displayRecipes() {
         removeButton.appendChild(removeImg);
         removeButton.addEventListener('click', () => removeRecipe(index)); // Add event listener for remove button
 
+        const viewIngredientsButton = document.createElement('button');
+        viewIngredientsButton.textContent = 'View Shopping List';
+        viewIngredientsButton.addEventListener('click', () => viewIngredients(index));
+
         buttonsDiv.appendChild(editButton);
         buttonsDiv.appendChild(removeButton);
+        buttonsDiv.appendChild(viewIngredientsButton);
 
         recipeDiv.appendChild(recipeTitle);
         recipeDiv.appendChild(recipeType);
@@ -174,6 +179,26 @@ function displayRecipes() {
 
         recipesDiv.appendChild(recipeDiv);
     });
+}
+
+function viewIngredients(index) {
+    const recipes = JSON.parse(localStorage.getItem('recipes')) || [];
+    const recipe = recipes[index];
+
+    const ingredientsListDiv = document.getElementById('ingredients-list');
+    ingredientsListDiv.innerHTML = '';
+
+    recipe.ingredients.forEach(ingredient => {
+        const ingredientItem = document.createElement('p');
+        ingredientItem.textContent = `${ingredient.quantity} ${ingredient.name} - $${ingredient.price.toFixed(2)}`;
+        ingredientsListDiv.appendChild(ingredientItem);
+    });
+
+    const totalCostP = document.getElementById('total-cost');
+    totalCostP.textContent = `Total Cost: $${recipe.totalCost.toFixed(2)}`;
+
+    // Display the popup
+    document.getElementById('popup-ingredients').style.display = 'block';
 }
 
 function editRecipe(index) {
@@ -256,4 +281,18 @@ function removeRecipe(index) {
     displayRecipes();
 }
 
-document.addEventListener('DOMContentLoaded', displayRecipes);
+document.addEventListener('DOMContentLoaded', () => {
+    displayRecipes();
+
+    // Close button for ingredients popup
+    document.querySelector('#popup-ingredients .close-btn').addEventListener('click', () => {
+        document.getElementById('popup-ingredients').style.display = 'none';
+    });
+
+    // Close popup when clicking outside it
+    window.addEventListener('click', (event) => {
+        if (event.target === document.getElementById('popup-ingredients')) {
+            document.getElementById('popup-ingredients').style.display = 'none';
+        }
+    });
+});

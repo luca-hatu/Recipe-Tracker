@@ -127,3 +127,60 @@ input, textarea, button {
     width: 20px; /* Adjust the size of the icons as needed */
     height: 20px;
 }
+/* Popup for Viewing Ingredients */
+#popup-ingredients {
+    display: none;
+    position: fixed;
+    z-index: 2;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#popup-ingredients .popup-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-width: 600px;
+    border-radius: 5px;
+    position: relative;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#popup-ingredients .close-btn {
+    position: absolute;
+    top: 10px;
+    right: 20px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+#popup-ingredients .close-btn:hover,
+#popup-ingredients .close-btn:focus {
+    color: black;
+}
+
+#ingredients-list {
+    margin-top: 10px;
+}
+
+#ingredients-list p {
+    margin: 5px 0;
+}
+
+#total-cost {
+    font-weight: bold;
+    margin-top: 10px;
+}
+.icon {
+    width: 20px; /* Adjust icon width */
+    height: 20px; /* Adjust icon height */
+    margin-right: 5px; /* Adjust spacing between icon and text */
+}
